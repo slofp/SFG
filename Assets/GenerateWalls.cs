@@ -12,9 +12,9 @@ public class GenerateWalls : MonoBehaviour {
 
 	float clearWallz = -50;
 
-	float speed = 50;
+	float speed = 1f;
 
-	float xPosition = 2; // debug
+	float xPosition = 0; // debug
 
 	// Start is called before the first frame update
 	void Start() {
@@ -23,12 +23,20 @@ public class GenerateWalls : MonoBehaviour {
 		}
 	}
 
+	GameObject getMaxGameObject() {
+		if (walls[0].gameObject.transform.position.z > walls[1].gameObject.transform.position.z) {
+			return walls[0];
+		}
+		return walls[1];
+	}
+
 	// Update is called once per frame
 	void Update() {
 		for (int i = 0; i < walls.Length; i++) {
 			var w = walls[i];
-			w.gameObject.transform.position -= new Vector3(0, 0, speed * Time.deltaTime);
+			w.gameObject.transform.position -= new Vector3(0, 0, speed);
 			if (w.gameObject.transform.position.z <= clearWallz) {
+				
 				w.gameObject.transform.position = new Vector3(xPosition * i, 0, zPosition);
 			}
 		}
