@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,8 @@ using UnityEngine;
 public class PlayerCameraFollow : MonoBehaviour, IReverse {
 
 	public GameObject stageCamera;
+
+	public GravityStateStore stateStore;
 
 	Vector3 cameraOffset;
 
@@ -14,7 +17,10 @@ public class PlayerCameraFollow : MonoBehaviour, IReverse {
 
 	float rotateSpeed = 10;
 
-	float limitX = 1.33f;
+	float limitX = 1.2f;
+
+	float limitMaxY = 1.6f;
+	float limitMinY = 0.5f;
 
 	// Start is called before the first frame update
 	void Start() {
@@ -31,12 +37,50 @@ public class PlayerCameraFollow : MonoBehaviour, IReverse {
 		);
 	}
 
-	public void reverseRotate() {
-		
+	public Vector3 gravityRotateVector(GravityState state, Vector3 current) {
+		if (state == GravityState.Top) {
+			return new Vector3(-current.x, current.y, current.z);
+		}
+		else if (state == GravityState.Left) {
+			return new Vector3(current.y, -current.x, current.z);
+		}
+		else if (state == GravityState.Right) {
+			return new Vector3(current.y, current.x, current.z);
+		}
+
+		return new Vector3(current.x, current.y, current.z);
 	}
 
-	Vector3 cuttingXPosition(Vector3 vector) {
-		return new Vector3(Mathf.Clamp(vector.x, -limitX, limitX), vector.y, vector.z);
+	public float gravityRotateZ(GravityState state) {
+		if (state == GravityState.Top) {
+			return 180;
+		}
+		else if (state == GravityState.Left) {
+			return -90;
+		}
+		else if (state == GravityState.Right) {
+			return 90;
+		}
+
+		return 0;
+	}
+
+	Vector3 gravityPositionOffset(GravityState state) {
+		if (state == GravityState.Top) {
+			return new Vector3(0, -1.6f, 0);
+		}
+		else if (state == GravityState.Left) {
+			return new Vector3(0.8f, -0.8f, 0);
+		}
+		else if (state == GravityState.Right) {
+			return new Vector3(-0.8f, -0.8f, 0);
+		}
+
+		return new Vector3(0, 0, 0);
+	}
+
+	Vector3 cuttingPosition(Vector3 vector) {
+		return new Vector3(Mathf.Clamp(vector.x, -limitX, limitX), Mathf.Clamp(vector.y, limitMinY, limitMaxY), vector.z);
 	}
 
 	private float getRotate() {
@@ -44,7 +88,7 @@ public class PlayerCameraFollow : MonoBehaviour, IReverse {
 	}
 
 	private void FixedUpdate() {
-		stageCamera.transform.position = cuttingXPosition(cameraOffset + gameObject.transform.position);
+		stageCamera.transform.position = cuttingPosition(cameraOffset + gravityPositionOffset(stateStore.state) + gameObject.transform.position);
 
 		if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) {
 			currentEuler.z -= getRotate();
@@ -63,12 +107,14 @@ public class PlayerCameraFollow : MonoBehaviour, IReverse {
 			}
 		}
 		currentEuler.z = Mathf.Clamp(currentEuler.z, -rotate, rotate);
-		stageCamera.transform.rotation = Quaternion.Euler(currentEuler);
+
+		var resultRotateEuler = new Vector3(currentEuler.x, currentEuler.y, currentEuler.z + gravityRotateZ(stateStore.state));
+
+		stageCamera.transform.rotation = Quaternion.Euler(gravityRotateVector(stateStore.state, resultRotateEuler));
 	}
 
 	// Update is called once per frame
 	void Update() {
-		
 	}
 
 	public void Reverse()
