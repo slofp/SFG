@@ -14,14 +14,14 @@ public class GravityStateStore : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		
-	}
-
-	void FixedUpdate() {
 		if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow)) {
 			Reverse();
 			UnityEngine.Debug.Log(state);
 		}
+	}
+
+	void FixedUpdate() {
+		
 	}
 
 	void Reverse() {

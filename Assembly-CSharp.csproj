@@ -36,13 +36,13 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets/GravityStateStore.cs" />
+     <Compile Include="Assets/GravityManage.cs" />
      <Compile Include="Assets/GenerateWalls.cs" />
      <Compile Include="Assets/PlayerController.cs" />
      <Compile Include="Assets/PlayerCameraFollow.cs" />
      <Compile Include="Assets/IReverse.cs" />
      <Compile Include="Assets/GravityState.cs" />
-     <Compile Include="Assets/GravityStateStore.cs" />
-     <Compile Include="Assets/GravityManage.cs" />
     <Reference Include="UnityEngine">
         <HintPath>/home/sharon/Unity/Hub/Editor/2021.3.23f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

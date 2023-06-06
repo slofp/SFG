@@ -22,6 +22,11 @@ public class PlayerCameraFollow : MonoBehaviour, IReverse {
 	float limitMaxY = 1.6f;
 	float limitMinY = 0.5f;
 
+	GravityState prevState = GravityState.Bottom;
+	float currentRotateZ = 0;
+	float moveRotateZ = 0;
+	float endRotateZ = 0;
+
 	// Start is called before the first frame update
 	void Start() {
 		cameraOffset = new Vector3(
@@ -51,12 +56,39 @@ public class PlayerCameraFollow : MonoBehaviour, IReverse {
 		return new Vector3(current.x, current.y, current.z);
 	}
 
+	float currentGravityRotateZ(GravityState state) {
+		if (prevState != state) {
+			endRotateZ = gravityRotateZ(state);
+			moveRotateZ = endRotateZ - currentRotateZ;
+			prevState = state;
+		}
+
+		/*if (state == GravityState.Top) {
+			return new Vector3(-current.x, current.y, current.z);
+		}
+		else if (state == GravityState.Left) {
+			return new Vector3(current.y, -current.x, current.z);
+		}
+		else if (state == GravityState.Right) {
+			return new Vector3(current.y, current.x, current.z);
+		}
+
+		return new Vector3(current.x, current.y, current.z);*/
+
+		if ((moveRotateZ < 0 && currentRotateZ <= endRotateZ) || (moveRotateZ >= 0 && currentRotateZ >= endRotateZ)) {
+			return endRotateZ;
+		}
+
+		currentRotateZ += moveRotateZ / (Time.deltaTime * 3600);
+		return currentRotateZ;
+	}
+
 	public float gravityRotateZ(GravityState state) {
 		if (state == GravityState.Top) {
 			return 180;
 		}
 		else if (state == GravityState.Left) {
-			return -90;
+			return 270;
 		}
 		else if (state == GravityState.Right) {
 			return 90;
@@ -108,7 +140,7 @@ public class PlayerCameraFollow : MonoBehaviour, IReverse {
 		}
 		currentEuler.z = Mathf.Clamp(currentEuler.z, -rotate, rotate);
 
-		var resultRotateEuler = new Vector3(currentEuler.x, currentEuler.y, currentEuler.z + gravityRotateZ(stateStore.state));
+		var resultRotateEuler = new Vector3(currentEuler.x, currentEuler.y, currentEuler.z + currentGravityRotateZ(stateStore.state));
 
 		stageCamera.transform.rotation = Quaternion.Euler(gravityRotateVector(stateStore.state, resultRotateEuler));
 	}
