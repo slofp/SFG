@@ -58,8 +58,8 @@ public class PlayerCameraFollow : MonoBehaviour, IReverse {
 
 	float currentGravityRotateZ(GravityState state) {
 		if (prevState != state) {
-			endRotateZ = gravityRotateZ(state);
-			moveRotateZ = endRotateZ - currentRotateZ;
+			moveRotateZ = gravityRotateZ(prevState, state);
+			endRotateZ = endRotateZ + moveRotateZ;
 			prevState = state;
 		}
 
@@ -79,18 +79,50 @@ public class PlayerCameraFollow : MonoBehaviour, IReverse {
 			return endRotateZ;
 		}
 
-		currentRotateZ += moveRotateZ / (Time.deltaTime * 3600);
+		currentRotateZ += moveRotateZ / (Time.deltaTime * 500);
 		return currentRotateZ;
 	}
 
-	public float gravityRotateZ(GravityState state) {
-		if (state == GravityState.Top) {
+	public float gravityRotateZ(GravityState prevState, GravityState state) {
+		if (prevState == GravityState.Bottom && state == GravityState.Top) {
 			return 180;
 		}
-		else if (state == GravityState.Left) {
-			return 270;
+		else if (prevState == GravityState.Top && state == GravityState.Bottom) {
+			return -180;
 		}
-		else if (state == GravityState.Right) {
+
+		if (prevState == GravityState.Left && state == GravityState.Right) {
+			return 180;
+		}
+		else if (prevState == GravityState.Right && state == GravityState.Left) {
+			return -180;
+		}
+
+		if (prevState == GravityState.Bottom && state == GravityState.Left) {
+			return -90;
+		}
+		else if (prevState == GravityState.Bottom && state == GravityState.Right) {
+			return 90;
+		}
+
+		if (prevState == GravityState.Top && state == GravityState.Left) {
+			return 90;
+		}
+		else if (prevState == GravityState.Top && state == GravityState.Right) {
+			return -90;
+		}
+
+		if (prevState == GravityState.Left && state == GravityState.Bottom) {
+			return 90;
+		}
+		else if (prevState == GravityState.Left && state == GravityState.Top) {
+			return -90;
+		}
+
+		if (prevState == GravityState.Right && state == GravityState.Bottom) {
+			return -90;
+		}
+		else if (prevState == GravityState.Right && state == GravityState.Top) {
 			return 90;
 		}
 
