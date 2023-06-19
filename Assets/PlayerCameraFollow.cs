@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCameraFollow : MonoBehaviour, IReverse {
+public class PlayerCameraFollow : MonoBehaviour {
 
 	public GameObject stageCamera;
 
@@ -179,10 +179,5 @@ public class PlayerCameraFollow : MonoBehaviour, IReverse {
 
 	// Update is called once per frame
 	void Update() {
-	}
-
-	public void Reverse()
-	{
-		throw new System.NotImplementedException();
 	}
 }
