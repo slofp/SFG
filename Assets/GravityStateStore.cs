@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GravityStateStore : MonoBehaviour {
 
+	public GameObject resultWindow;
+
 	public GravityState state { get; set; }
 
 	// Start is called before the first frame update
@@ -14,6 +16,7 @@ public class GravityStateStore : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
+		if (resultWindow.activeSelf) return;
 		if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow)) {
 			Reverse();
 			UnityEngine.Debug.Log(state);

@@ -10,13 +10,13 @@ public class GravityManage : MonoBehaviour {
 	private GravityStateStore stateStore;
 
 	// this is bottom gravity
-	private Vector3 firstGravity;
+	private static readonly Vector3 firstGravity = firstGravity = new Vector3(Physics.gravity.x, Physics.gravity.y, Physics.gravity.z);
 
 	// Start is called before the first frame update
 	void Start() {
 		stateStore = GetComponent<GravityStateStore>();
 		prevState = stateStore.state;
-		firstGravity = new Vector3(Physics.gravity.x, Physics.gravity.y, Physics.gravity.z);
+		Physics.gravity = firstGravity;
 	}
 
 	// Update is called once per frame

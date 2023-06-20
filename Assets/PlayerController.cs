@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour {
 	public GravityStateStore stateStore;
+	public GameObject resultWindow;
 
 	private new Rigidbody rigidbody;
 
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour {
 	private bool isRightKey => Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D);
 
 	private void FixedUpdate() {
+		if (resultWindow.activeSelf) return;
 		var velocityVec =
 			stateStore.state == GravityState.Top ? TopStateControl()
 			: stateStore.state == GravityState.Left ? LeftStateControl()

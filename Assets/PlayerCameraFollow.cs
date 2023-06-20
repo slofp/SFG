@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerCameraFollow : MonoBehaviour {
 
 	public GameObject stageCamera;
+	public GameObject resultWindow;
 
 	public GravityStateStore stateStore;
 
@@ -152,6 +153,7 @@ public class PlayerCameraFollow : MonoBehaviour {
 	}
 
 	private void FixedUpdate() {
+		if (resultWindow.activeSelf) return;
 		stageCamera.transform.position = cuttingPosition(cameraOffset + gravityPositionOffset(stateStore.state) + gameObject.transform.position);
 
 		if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) {
