@@ -11,11 +11,14 @@ public class GenerateWalls : MonoBehaviour {
 
 	public GameObject[] Walls => walls;
 
+	[SerializeField]
+	StageManage stageManage;
+
 	float zPosition = 49.9f;
 
 	float clearWallz = -50;
 
-	public float speed = 25f;
+	public float speed = 10f;
 
 	float xPosition = 0; // debug
 
@@ -51,7 +54,7 @@ public class GenerateWalls : MonoBehaviour {
 			var gm2 = walls[gm2Index];
 			//Debug.Log(gm1.gameObject.transform.position.z);
 			//Debug.Log(gm2.gameObject.transform.position.z + zPosition);
-			if (gm1.gameObject.transform.position.z > gm2.gameObject.transform.position.z + zPosition) { 
+			if (gm1.gameObject.transform.position.z > gm2.gameObject.transform.position.z + zPosition) {
 				gm1.gameObject.transform.position = new Vector3(xPosition * i, 0, gm2.gameObject.transform.position.z + zPosition);
 			}
 		}
@@ -63,8 +66,11 @@ public class GenerateWalls : MonoBehaviour {
 			var w = walls[i];
 			w.gameObject.transform.position -= new Vector3(0, 0, speed * Time.deltaTime);
 			if (w.gameObject.transform.position.z <= clearWallz) {
+				stageManage.WallFinalize(w.gameObject);
 				
 				w.gameObject.transform.position = new Vector3(xPosition * i, 0, getMaxGameObject().gameObject.transform.position.z + zPosition);
+
+				stageManage.WallInitialize(w.gameObject);
 			}
 		}
 

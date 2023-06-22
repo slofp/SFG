@@ -11,6 +11,9 @@ public class PlayerColliderEvent : MonoBehaviour {
 	public ResultEvent resultWindowEvent;
 	public GenerateWalls generateWalls;
 
+	[SerializeField]
+	bool debug = false;
+
 	void Start() {
 	}
 
@@ -20,6 +23,7 @@ public class PlayerColliderEvent : MonoBehaviour {
 	}
 
 	private void OnCollisionEnter(Collision collision) {
+		if (debug) return;
 		if (collision.gameObject.name.StartsWith(collisionObjectName)) {
 			Debug.Log("Collisioin!!!!");
 			scoreStore.stop = true;

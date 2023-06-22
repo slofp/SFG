@@ -49,7 +49,7 @@ public class ScoreStore : MonoBehaviour {
 			if (scoreCounter > score) scoreCounter = score;
 		}
 
-		timeTextDisplay.text = string.Format("{0:00.00}<space=0.05em><font=\"Waxe SDF\"><size=80%>s", time);
+		timeTextDisplay.text = string.Format("{1}{0:00.00}<space=0.05em><font=\"Waxe SDF\"><size=80%>s", time, time >= minSecound ? "<color=#FFB940>" : "");
 		scoreTextDisplay.text = string.Format("{0:000,000}", scoreCounter);
 	}
 

@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour {
 
 		gameObject.transform.position = new Vector3(
 			Mathf.Clamp(gameObject.transform.position.x, -xLimit, xLimit),
-			Mathf.Clamp(gameObject.transform.position.y, -yLimit + YPadding, yLimit + YPadding),
+			Mathf.Clamp(gameObject.transform.position.y, YPadding, yLimit + YPadding),
 			-3.5f
 		);
 	}

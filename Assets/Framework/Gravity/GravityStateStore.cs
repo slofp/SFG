@@ -9,6 +9,9 @@ public class GravityStateStore : MonoBehaviour {
 
 	public GravityState state { get; set; }
 
+	[SerializeField]
+	PlayerCameraFollow playerCameraFollow;
+
 	// Start is called before the first frame update
 	void Start() {
 		state = GravityState.Bottom;
@@ -40,5 +43,6 @@ public class GravityStateStore : MonoBehaviour {
 		else if (state == GravityState.Right) {
 			state = GravityState.Left;
 		}
+		playerCameraFollow.reversePosition();
 	}
 }

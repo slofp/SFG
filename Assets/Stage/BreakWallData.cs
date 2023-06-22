@@ -18,4 +18,6 @@ public class BreakWallData {
 	public BreakWallData(Vector3 position, Vector3 scale, AnimateWallData animateData) : this(position, scale) {
 		AnimateData = animateData;
 	}
+
+	public BreakWallData(BreakWallData data) : this(data.Position, data.Scale, data.AnimateData) {}
 }

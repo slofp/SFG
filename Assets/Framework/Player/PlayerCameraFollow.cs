@@ -28,6 +28,16 @@ public class PlayerCameraFollow : MonoBehaviour {
 	float moveRotateZ = 0;
 	float endRotateZ = 0;
 
+	/**
+	 * time = [0 - 1]
+	 */
+	float easeOutBack(float time) {
+		float c1 = 1.70158f;
+		float c3 = c1 + 1;
+
+		return 1 + c3 * Mathf.Pow(time - 1, 3) + c1 * Mathf.Pow(time - 1, 2);
+	}
+
 	// Start is called before the first frame update
 	void Start() {
 		cameraOffset = new Vector3(
@@ -57,10 +67,12 @@ public class PlayerCameraFollow : MonoBehaviour {
 		return new Vector3(current.x, current.y, current.z);
 	}
 
+	private float rotateZEaseTime = 0;
 	float currentGravityRotateZ(GravityState state) {
 		if (prevState != state) {
 			moveRotateZ = gravityRotateZ(prevState, state);
 			endRotateZ = endRotateZ + moveRotateZ;
+			rotateZEaseTime = 0;
 			prevState = state;
 		}
 
@@ -80,7 +92,8 @@ public class PlayerCameraFollow : MonoBehaviour {
 			return endRotateZ;
 		}
 
-		currentRotateZ += moveRotateZ / (Time.deltaTime * 500);
+		rotateZEaseTime += Time.deltaTime;
+		currentRotateZ = (endRotateZ - moveRotateZ) + moveRotateZ * easeOutBack(rotateZEaseTime * 2);
 		return currentRotateZ;
 	}
 
@@ -152,9 +165,65 @@ public class PlayerCameraFollow : MonoBehaviour {
 		return rotate * Time.deltaTime * rotateSpeed;
 	}
 
+	private float easeOutCubic(float time) {
+		return 1 - Mathf.Pow(1 - time, 3);
+	}
+
+	private float reverseTimer = 0;
+	private bool isReversing = false;
+
+	public void reversePosition() {
+		reverseTimer = 0.1f;
+		isReversing = true;
+	}
+
+	private const float cameraMoveDecay = 0.9999f;
+
+	private const float playerLimitX = 1.5f;
+	private const float playerLimitY = 1.6f;
+	private const float YPadding = 0.2f;
+
+	private Vector3 getReversedFinalPosition(GravityState state) {
+		if (state == GravityState.Bottom) {
+			return new Vector3(gameObject.transform.position.x, YPadding, gameObject.transform.position.z);
+		}
+		else if (state == GravityState.Top) {
+			return new Vector3(gameObject.transform.position.x, playerLimitY + YPadding, gameObject.transform.position.z);
+		}
+		else if (state == GravityState.Right) {
+			return new Vector3(playerLimitX, gameObject.transform.position.y, gameObject.transform.position.z);
+		}
+		else {
+			return new Vector3(-playerLimitX, gameObject.transform.position.y, gameObject.transform.position.z);
+		}
+	}
+
 	private void FixedUpdate() {
 		if (resultWindow.activeSelf) return;
-		stageCamera.transform.position = cuttingPosition(cameraOffset + gravityPositionOffset(stateStore.state) + gameObject.transform.position);
+		var playerPosition = gameObject.transform.position;
+		if (isReversing) {
+			if (
+				(stateStore.state == GravityState.Bottom && playerPosition.y <= YPadding) ||
+				(stateStore.state == GravityState.Top && playerPosition.y >= playerLimitY + YPadding) ||
+				(stateStore.state == GravityState.Left && playerPosition.x <= -playerLimitX) ||
+				(stateStore.state == GravityState.Right && playerPosition.x >= playerLimitX)
+			) {
+				isReversing = false;
+			}
+			playerPosition = getReversedFinalPosition(stateStore.state);
+		}
+		var cameraGoalPos = cuttingPosition(cameraOffset + gravityPositionOffset(stateStore.state) + playerPosition);
+		float rm;
+		if (Time.deltaTime > reverseTimer) {
+			rm = reverseTimer;
+			reverseTimer = 0;
+		}
+		else {
+			rm = Time.deltaTime;
+			reverseTimer -= Time.deltaTime;
+		}
+		stageCamera.transform.position += (cameraGoalPos - stageCamera.transform.position) *
+			(1 - Mathf.Pow(1 - cameraMoveDecay, Time.deltaTime)) * Mathf.Pow(0.1f, rm * 120);
 
 		if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) {
 			currentEuler.z -= getRotate();
