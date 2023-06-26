@@ -18,8 +18,6 @@ public class StageManage : MonoBehaviour {
 
 	private int currentPattrnLength = 0;
 
-	private GameObject lastGameObject = null;
-
 	// Start is called before the first frame update
 	void Start() {
 		
